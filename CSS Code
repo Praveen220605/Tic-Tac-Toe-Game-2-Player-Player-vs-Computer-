@@ -1,0 +1,140 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+}
+
+/* Header */
+h1 {
+    font-size: 3rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Game Mode Section */
+#current-mode {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Game Board */
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 5px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+/* Individual Squares */
+.square {
+    width: 100px;
+    height: 100px;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: bold;
+    border: 2px solid #ccc;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.square:hover {
+    background-color: #e0e0e0;
+}
+
+.square.x {
+    color: #ff6347;
+}
+
+.square.o {
+    color: #4caf50;
+}
+
+/* Winning Line */
+.line {
+    position: absolute;
+    background-color: #ff6347;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.horizontal {
+    height: 5px;
+    width: 300px; /* Fixed width for horizontal lines */
+    top: 50%;
+    left: 0;
+}
+
+.vertical {
+    width: 5px;
+    height: 300px; /* Fixed height for vertical lines */
+    left: 50%;
+    top: 0;
+}
+
+.diagonal1 {
+    width: 5px;
+    height: 300px;
+    top: -10%;
+    left: -10%;
+    transform: rotate(45deg);
+    transform-origin: center center;
+}
+
+.diagonal2 {
+    width: 5px;
+    height: 300px;
+    top: -10%;
+    right: -10%;
+    transform: rotate(-45deg);
+    transform-origin: center center;
+}
+
+/* Winner Message */
+#winner-message {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-top: 20px;
+}
+
+/* Buttons Section */
+button {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 5px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Restart Button */
+#restart {
+    background-color: #ff6347;
+}
+
+#restart:hover {
+    background-color: #e55347;
+}
