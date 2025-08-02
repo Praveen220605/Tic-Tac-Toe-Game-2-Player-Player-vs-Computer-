@@ -1,0 +1,161 @@
+let currentPlayer = 'X';
+let gameBoard = ['', '', '', '', '', '', '', '', ''];
+let gameOver = false;
+let isTwoPlayerMode = true; // Flag for 2 Player vs. Player vs. Computer
+const squares = document.querySelectorAll('.square');
+const restartButton = document.getElementById('restart');
+const twoPlayerButton = document.getElementById('two-player');
+const playerVsComputerButton = document.getElementById('player-vs-computer');
+const winnerMessage = document.getElementById('winner-message');
+const currentMode = document.getElementById('current-mode');
+
+twoPlayerButton.addEventListener('click', startTwoPlayerGame);
+playerVsComputerButton.addEventListener('click', startPlayerVsComputerGame);
+restartButton.addEventListener('click', restartGame);
+
+let winningCombo = null;  // Store the winning combination
+
+function startTwoPlayerGame() {
+    isTwoPlayerMode = true;
+    resetGame();
+    currentMode.textContent = 'Current Mode: 2 Player Game';
+}
+
+function startPlayerVsComputerGame() {
+    isTwoPlayerMode = false;
+    resetGame();
+    currentMode.textContent = 'Current Mode: Player vs Computer';
+    if (currentPlayer === 'O') {
+        computerMove();
+    }
+}
+
+function resetGame() {
+    gameBoard = ['', '', '', '', '', '', '', '', ''];
+    gameOver = false;
+    currentPlayer = 'X';
+    winnerMessage.textContent = ''; // Clear any previous winner message
+    currentMode.textContent = ''; // Clear current mode text
+    squares.forEach(square => {
+        square.textContent = '';
+    });
+    removeWinningLine();
+}
+
+squares.forEach(square => {
+    square.addEventListener('click', handleClick);
+});
+
+function handleClick(event) {
+    const index = event.target.getAttribute('data-index');
+    if (gameBoard[index] || gameOver) return;
+
+    gameBoard[index] = currentPlayer;
+    event.target.textContent = currentPlayer;
+
+    if (checkWinner()) {
+        winnerMessage.textContent = `${currentPlayer} wins!`;
+        gameOver = true;
+        drawWinningLine();
+        return;
+    }
+
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+
+    if (!isTwoPlayerMode && currentPlayer === 'O' && !gameOver) {
+        computerMove();
+    }
+}
+
+function checkWinner() {
+    const winningCombos = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+    ];
+
+    for (let combo of winningCombos) {
+        const [a, b, c] = combo;
+        if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+            winningCombo = combo; // Store the winning combination
+            return true;
+        }
+    }
+    return false;
+}
+
+function computerMove() {
+    const emptySquares = gameBoard
+        .map((val, index) => val === '' ? index : null)
+        .filter(val => val !== null);
+
+    const randomIndex = emptySquares[Math.floor(Math.random() * emptySquares.length)];
+    gameBoard[randomIndex] = 'O';
+    squares[randomIndex].textContent = 'O';
+
+    if (checkWinner()) {
+        winnerMessage.textContent = 'Computer wins!';
+        gameOver = true;
+        drawWinningLine();
+        return;
+    }
+
+    currentPlayer = 'X'; // Player's turn after computer move
+}
+
+function drawWinningLine() {
+    if (!winningCombo) return;
+
+    const [a, b, c] = winningCombo;
+    const squareA = squares[a];
+    const squareB = squares[b];
+    const squareC = squares[c];
+    
+    const line = document.createElement('div');
+    line.classList.add('line');
+
+    // Check for horizontal line
+    if (a === 0 && b === 1 && c === 2) {
+        line.classList.add('horizontal');
+        line.style.top = `${squareA.offsetTop + 50}px`; // Positioning the line in the center of the squares
+        line.style.left = `${squareA.offsetLeft}px`;
+        line.style.width = `${squareA.offsetWidth * 3}px`; // Span across three squares
+    }
+    // Check for vertical line
+    else if (a === 0 && b === 3 && c === 6) {
+        line.classList.add('vertical');
+        line.style.top = `${squareA.offsetTop}px`;
+        line.style.left = `${squareA.offsetLeft + 50}px`; // Position the line at the center of the square
+        line.style.height = `${squareA.offsetHeight * 3}px`; // Span across three squares vertically
+    }
+    // Check for diagonal (top-left to bottom-right) line
+    else if (a === 0 && b === 4 && c === 8) {
+        line.classList.add('diagonal1');
+        line.style.top = `${squareA.offsetTop + 50}px`;
+        line.style.left = `${squareA.offsetLeft + 50}px`;
+        line.style.transformOrigin = 'center center';
+    }
+    // Check for diagonal (top-right to bottom-left) line
+    else if (a === 2 && b === 4 && c === 6) {
+        line.classList.add('diagonal2');
+        line.style.top = `${squareA.offsetTop + 50}px`;
+        line.style.left = `${squareA.offsetLeft + 50}px`;
+        line.style.transformOrigin = 'center center';
+    }
+
+    document.querySelector('.board').appendChild(line);
+}
+
+function removeWinningLine() {
+    const lines = document.querySelectorAll('.line');
+    lines.forEach(line => line.remove());
+}
+
+function restartGame() {
+    resetGame();
+}
